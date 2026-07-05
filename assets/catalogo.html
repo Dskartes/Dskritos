@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Catálogo de signos — Dskritos</title>
+<meta name="description" content="Explora los signos cuneiformes simples del sumerio y todos los signos compuestos que los usan, con lecturas y glosas del ePSD2.">
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/catalogo.css">
+</head>
+<body>
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a class="wordmark" href="index.html"><span class="glyph">𒁾</span>Dskritos</a>
+    <div class="nav-links">
+      <a href="index.html">Inicio</a>
+      <a href="catalogo.html" class="active">Catálogo de signos</a>
+      <a href="combinador.html">Combinador de lecturas</a>
+      <a href="descargas.html">Descargas</a>
+    </div>
+  </div>
+</nav>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow"><span class="glyph-rule">𒀀𒈾𒁲</span> ePSD2 · signario sumerio</div>
+    <h1>Catálogo de signos</h1>
+    <p class="subtitle">Explora los signos simples y, al seleccionarlos, todos los signos compuestos que los usan como componente — agrupados según si aparecen como primer elemento o en otra posición.</p>
+  </header>
+
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Buscar signo simple por nombre (ej. AN, GA, LAGAB)...">
+    <div class="search-meta" id="searchMeta"></div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <div id="detailPanel">
+    <div class="detail-header">
+      <div class="detail-glyph" id="detailGlyph"></div>
+      <div class="detail-title-block">
+        <div class="detail-name" id="detailName"></div>
+        <div class="detail-readings" id="detailReadings"></div>
+      </div>
+      <button class="detail-close" id="btnClose">Cerrar</button>
+    </div>
+    <div class="detail-body">
+      <div class="group-label">Como primer componente — ej. <span id="exPrimary"></span></div>
+      <div class="compound-grid" id="primaryGrid"></div>
+
+      <div class="group-label">En otra posición del compuesto</div>
+      <div class="compound-grid" id="secondaryGrid"></div>
+    </div>
+  </div>
+
+  <footer>signario: 381 signos simples · 1.568 signos compuestos · ePSD2 (Pennsylvania Sumerian Dictionary)</footer>
+</div>
+<footer class="site-footer">
+  <span>Dskritos · recursos de sumerio y acadio basados en ePSD2 (Pennsylvania Sumerian Dictionary)</span>
+  <span>Datos con fines de estudio · sin conexión a servidores externos</span>
+</footer>
+<script src="assets/js/data-catalogo.js"></script>
+<script src="assets/js/logic-catalogo.js"></script>
+</body>
+</html>
