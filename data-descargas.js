@@ -1,111 +1,77 @@
-.section-label{
-  font-family:'JetBrains Mono', monospace;
-  font-size:11.5px;
-  letter-spacing:0.12em;
-  text-transform:uppercase;
-  color:var(--clay-700);
-  margin:36px 0 14px;
-  padding-bottom:8px;
-  border-bottom:1px solid var(--line);
-}
-.section-label:first-of-type{ margin-top:8px; }
+// Metadatos "bonitos" para archivos conocidos de la carpeta /descargas.
+// Si un archivo nuevo no aparece aquí, la página igual lo muestra,
+// pero con título genérico (su nombre de archivo) en la sección "Otros documentos".
+// Para agregarle una descripción propia, solo añade una entrada más abajo
+// usando el nombre EXACTO del archivo como aparece en GitHub.
 
-.dl-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));
-  gap:14px;
-}
+window.DESCARGAS_META = {
+  "ePSD Akkadian Index.pdf": {
+    titulo: "Índice acádico",
+    descripcion: "Listado de palabras y formas acadias del ePSD2, con referencias cruzadas a las entradas sumerias correspondientes.",
+    glifo: "𒀝",
+    seccion: "Índices ePSD2"
+  },
+  "ePSD Emesal Index.pdf": {
+    titulo: "Índice emesal",
+    descripcion: "Vocabulario del emesal, el registro dialectal usado en lamentaciones y en el habla de ciertos personajes de los textos literarios.",
+    glifo: "𒂊",
+    seccion: "Índices ePSD2"
+  },
+  "ePSD_Indice_Emesal_ES (1).pdf": {
+    titulo: "Índice emesal (traducido al español)",
+    descripcion: "Versión en español del índice emesal, con las glosas traducidas del inglés original del ePSD2.",
+    glifo: "𒂊",
+    seccion: "Índices ePSD2"
+  },
+  "ePSD English index.pdf": {
+    titulo: "Índice en inglés",
+    descripcion: "Índice de glosas en inglés del ePSD2, útil para buscar una palabra sumeria a partir de su significado.",
+    glifo: "𒂍",
+    seccion: "Índices ePSD2"
+  },
+  "ePSD List of Suppletive Verbs.pdf": {
+    titulo: "Verbos supletivos",
+    descripcion: "Lista de verbos sumerios con raíces supletivas — formas distintas según número o aspecto (ej. singular / plural).",
+    glifo: "𒀸",
+    seccion: "Índices ePSD2"
+  },
+  "ePSD Sumerian citation form index.pdf": {
+    titulo: "Formas de cita",
+    descripcion: "Índice de las formas de cita (lemas) usadas por el ePSD2 para normalizar la entrada de cada palabra sumeria.",
+    glifo: "𒁇",
+    seccion: "Índices ePSD2"
+  },
+  "ePSD Sumerian sign name index.pdf": {
+    titulo: "Nombres de signos",
+    descripcion: "Catálogo de nombres de signos cuneiformes sumerios, la base de referencia para identificar cada signo por su transliteración estándar.",
+    glifo: "𒐕",
+    seccion: "Índices ePSD2"
+  },
+  "ePSD Sumerian transliteracion.pdf": {
+    titulo: "Transliteración sumeria",
+    descripcion: "Índice general de transliteración del corpus sumerio del ePSD2 — el listado más extenso del signario.",
+    glifo: "𒌷",
+    seccion: "Índices ePSD2"
+  },
+  "Refranes_sumerios.pdf": {
+    titulo: "Refranes sumerios",
+    descripcion: "Recopilación de refranes y proverbios sumerios, con su transliteración y traducción al español.",
+    glifo: "𒌓",
+    seccion: "Textos"
+  },
+  "ogsl_signos_valores_foneticos.xlsx": {
+    titulo: "OGSL — valores fonéticos",
+    descripcion: "Catálogo Oracc Global Sign List: 2.695 signos con sus valores fonéticos documentados y concordancias con listas de referencia (MZL, HZL, ABZL, ASY, SYA).",
+    glifo: "𒑐",
+    seccion: "Catálogos de signos"
+  },
+  "valores_foneticos_homofonos.xlsx": {
+    titulo: "Valores fonéticos y homófonos",
+    descripcion: "Los 9.065 valores fonéticos del combinador, agrupados por sílaba base (ej. sa, sa2, sa3...) junto con su signo correspondiente.",
+    glifo: "𒑐",
+    seccion: "Catálogos de signos"
+  }
+};
 
-.dl-card{
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:3px;
-  padding:20px 20px 16px;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  position:relative;
-  transition:border-color 0.12s ease, box-shadow 0.12s ease, transform 0.08s ease;
-}
-.dl-card:hover{
-  border-color:var(--terracotta);
-  box-shadow:0 2px 10px rgba(58,48,34,0.08);
-  transform:translateY(-1px);
-}
-.dl-card-top{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:10px;
-}
-.dl-glyph{
-  font-family:'Noto Sans Cuneiform', serif;
-  font-size:22px;
-  color:var(--terracotta);
-  line-height:1;
-}
-.dl-format{
-  font-family:'JetBrains Mono', monospace;
-  font-size:10px;
-  letter-spacing:0.08em;
-  text-transform:uppercase;
-  color:var(--lapis);
-  border:1px solid var(--lapis);
-  border-radius:2px;
-  padding:3px 7px;
-  white-space:nowrap;
-}
-.dl-title{
-  font-family:'Spectral', serif;
-  font-weight:600;
-  font-size:17px;
-  color:var(--clay-900);
-  margin:0;
-  line-height:1.3;
-}
-.dl-desc{
-  font-size:13.5px;
-  color:var(--clay-700);
-  line-height:1.5;
-  margin:0;
-  flex-grow:1;
-}
-.dl-meta{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  margin-top:6px;
-  padding-top:12px;
-  border-top:1px solid var(--clay-100);
-}
-.dl-size{
-  font-family:'JetBrains Mono', monospace;
-  font-size:11px;
-  color:var(--clay-700);
-}
-.dl-btn{
-  font-family:'JetBrains Mono', monospace;
-  font-size:11.5px;
-  letter-spacing:0.06em;
-  text-transform:uppercase;
-  text-decoration:none;
-  color:#fff;
-  background:var(--terracotta);
-  border-radius:2px;
-  padding:8px 14px;
-  transition:background 0.12s ease;
-  white-space:nowrap;
-}
-.dl-btn:hover{ background:var(--terracotta-dark); }
-
-.dl-note{
-  font-size:13px;
-  color:var(--clay-700);
-  line-height:1.6;
-  max-width:70ch;
-  margin:0 0 4px;
-}
-
-@media (max-width:520px){
-  .dl-grid{ grid-template-columns:1fr; }
-}
+// Orden en que se muestran las secciones (las que no estén aquí van al final)
+window.DESCARGAS_ORDEN_SECCIONES = ["Índices ePSD2", "Textos", "Catálogos de signos", "Otros documentos"];
