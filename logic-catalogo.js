@@ -1,65 +1,88 @@
-(function () {
-  const PALETTE = window.GLIFO_PALETTE || [];
-  const seqEl = document.getElementById('seq');
-  const btnTeclado = document.getElementById('btnTeclado');
-  const panel = document.getElementById('tecladoPanel');
-  const searchEl = document.getElementById('tecladoSearch');
-  const gridEl = document.getElementById('tecladoGrid');
-  const countEl = document.getElementById('tecladoCount');
+(function(){
+  const DATA = window.CATALOGO || [];
+  const gridEl = document.getElementById('grid');
+  const searchEl = document.getElementById('searchInput');
+  const searchMeta = document.getElementById('searchMeta');
+  const panel = document.getElementById('detailPanel');
+  const btnClose = document.getElementById('btnClose');
 
-  function renderGrid(filter) {
-    const q = (filter || '').trim().toUpperCase();
-    const list = q
-      ? PALETTE.filter(p => p.signo.toUpperCase().includes(q))
-      : PALETTE;
+  let activeSigno = null;
 
-    countEl.textContent = list.length + ' signo' + (list.length === 1 ? '' : 's');
+  function renderGrid(filter){
+    const f = (filter || '').trim().toUpperCase();
+    const filtered = f ? DATA.filter(d => d.signo.toUpperCase().includes(f)) : DATA;
+    searchMeta.textContent = filtered.length + ' / ' + DATA.length + ' signos';
 
-    if (list.length === 0) {
-      gridEl.innerHTML = '<div class="teclado-empty">No hay signos que coincidan con «' + q + '».</div>';
+    if(filtered.length === 0){
+      gridEl.innerHTML = `<div class="no-results" style="grid-column:1/-1;"><div class="big-glyph">?</div><p>Ningún signo simple coincide con «${f}».</p></div>`;
       return;
     }
 
-    const frag = document.createDocumentFragment();
-    list.forEach(p => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'teclado-btn';
-      btn.title = p.signo;
-      btn.innerHTML = '<span class="g">' + p.glifo + '</span><span class="n">' + p.signo + '</span>';
-      btn.addEventListener('click', () => insertGlifo(p.glifo));
-      frag.appendChild(btn);
-    });
     gridEl.innerHTML = '';
-    gridEl.appendChild(frag);
+    filtered.forEach(d=>{
+      const tile = document.createElement('div');
+      const hasCompounds = d.total_compuestos > 0;
+      tile.className = 'simple-tile' + (hasCompounds ? '' : ' no-compounds') + (activeSigno === d.signo ? ' active' : '');
+      tile.innerHTML = `
+        <div class="tile-glyph">${d.glifo || '—'}</div>
+        <div class="tile-name">${d.signo}</div>
+        ${hasCompounds ? `<div class="tile-badge">${d.total_compuestos}</div>` : ''}
+      `;
+      if(hasCompounds){
+        tile.addEventListener('click', ()=> openDetail(d));
+      }
+      gridEl.appendChild(tile);
+    });
   }
 
-  function insertGlifo(glifo) {
-    const start = seqEl.selectionStart != null ? seqEl.selectionStart : seqEl.value.length;
-    const end = seqEl.selectionEnd != null ? seqEl.selectionEnd : seqEl.value.length;
-    const before = seqEl.value.slice(0, start);
-    const after = seqEl.value.slice(end);
-    const needsSpaceBefore = before.length > 0 && !/\s$/.test(before);
-    const insert = (needsSpaceBefore ? ' ' : '') + glifo + ' ';
-    seqEl.value = before + insert + after;
-    const pos = (before + insert).length;
-    seqEl.focus();
-    seqEl.setSelectionRange(pos, pos);
-  }
+  function openDetail(d){
+    activeSigno = d.signo;
+    renderGrid(searchEl.value);
 
-  btnTeclado.addEventListener('click', () => {
-    const isHidden = panel.hasAttribute('hidden');
-    if (isHidden) {
-      panel.removeAttribute('hidden');
-      btnTeclado.classList.add('active');
-      renderGrid('');
-      searchEl.value = '';
-      searchEl.focus();
+    document.getElementById('detailGlyph').textContent = d.glifo || '—';
+    document.getElementById('detailName').textContent = d.signo;
+
+    const readingsTxt = (d.lecturas || []).map(l => l.lectura).filter(Boolean).join(', ');
+    document.getElementById('detailReadings').textContent = readingsTxt ? 'lecturas: ' + readingsTxt : '';
+
+    document.getElementById('exPrimary').textContent = d.signo + '×' + d.signo;
+
+    const primaryGrid = document.getElementById('primaryGrid');
+    const secondaryGrid = document.getElementById('secondaryGrid');
+
+    if(d.compuestos_primary.length){
+      primaryGrid.innerHTML = d.compuestos_primary.map(c => `
+        <div class="compound-tile">
+          <div class="compound-glyph">${c.glifo || '—'}</div>
+          <div class="compound-name">${c.signo}</div>
+        </div>
+      `).join('');
     } else {
-      panel.setAttribute('hidden', '');
-      btnTeclado.classList.remove('active');
+      primaryGrid.innerHTML = `<div class="empty-group">No hay compuestos donde ${d.signo} sea el primer componente.</div>`;
     }
+
+    if(d.compuestos_secondary.length){
+      secondaryGrid.innerHTML = d.compuestos_secondary.map(c => `
+        <div class="compound-tile">
+          <div class="compound-glyph">${c.glifo || '—'}</div>
+          <div class="compound-name">${c.signo}</div>
+        </div>
+      `).join('');
+    } else {
+      secondaryGrid.innerHTML = `<div class="empty-group">No hay compuestos donde ${d.signo} aparezca en otra posición.</div>`;
+    }
+
+    panel.classList.add('open');
+    panel.scrollIntoView({behavior:'smooth', block:'nearest'});
+  }
+
+  btnClose.addEventListener('click', ()=>{
+    panel.classList.remove('open');
+    activeSigno = null;
+    renderGrid(searchEl.value);
   });
 
-  searchEl.addEventListener('input', () => renderGrid(searchEl.value));
+  searchEl.addEventListener('input', ()=> renderGrid(searchEl.value));
+
+  renderGrid('');
 })();

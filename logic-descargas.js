@@ -1,158 +1,112 @@
-.hero{
-  padding:6px 0 8px;
-}
-.hero-glyphs{
-  font-family:'Noto Sans Cuneiform', serif;
-  font-size:clamp(34px,7vw,54px);
-  color:var(--terracotta);
-  letter-spacing:0.08em;
-  margin-bottom:14px;
-  line-height:1;
-}
-.hero h1{
-  font-size:clamp(32px,5vw,46px);
-  max-width:16ch;
-}
-.hero .subtitle{
-  max-width:56ch;
-  font-size:16.5px;
-}
-.hero-actions{
-  display:flex;
-  gap:12px;
-  margin-top:24px;
-  flex-wrap:wrap;
-}
-.hero-btn{
-  font-family:'JetBrains Mono', monospace;
-  font-size:12px;
-  letter-spacing:0.06em;
-  text-transform:uppercase;
-  text-decoration:none;
-  padding:12px 22px;
-  border-radius:2px;
-  transition:background 0.12s ease, border-color 0.12s ease, transform 0.08s ease;
-}
-.hero-btn:active{ transform:translateY(1px); }
-.hero-btn.primary{ background:var(--terracotta); color:#fff; }
-.hero-btn.primary:hover{ background:var(--terracotta-dark); }
-.hero-btn.ghost{ background:transparent; color:var(--clay-900); border:1px solid var(--clay-200); }
-.hero-btn.ghost:hover{ border-color:var(--terracotta); color:var(--terracotta-dark); }
+(function () {
+  var REPO_OWNER = "dskartes";
+  var REPO_NAME = "Dskritos";
+  var CARPETA = "descargas";
+  var API_URL = "https://api.github.com/repos/" + REPO_OWNER + "/" + REPO_NAME + "/contents/" + CARPETA;
 
-/* Franja de estadísticas */
-.stats-strip{
-  display:grid;
-  grid-template-columns:repeat(4, 1fr);
-  border-top:1px solid var(--line);
-  border-bottom:1px solid var(--line);
-  margin:38px 0 44px;
-}
-.stat{
-  padding:18px 16px;
-  text-align:center;
-  border-left:1px solid var(--line);
-}
-.stat:first-child{ border-left:none; }
-.stat-num{
-  font-family:'Spectral', serif;
-  font-weight:600;
-  font-size:26px;
-  color:var(--clay-900);
-}
-.stat-label{
-  font-family:'JetBrains Mono', monospace;
-  font-size:10.5px;
-  letter-spacing:0.06em;
-  text-transform:uppercase;
-  color:var(--clay-700);
-  margin-top:4px;
-}
+  var contenedor = document.getElementById("dl-dynamic");
+  var estado = document.getElementById("dl-estado");
 
-/* Tarjetas de herramientas */
-.tools-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));
-  gap:16px;
-  margin-bottom:12px;
-}
-.tool-card{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  background:var(--clay-50);
-  border:1px solid var(--line);
-  border-radius:3px;
-  padding:24px;
-  text-decoration:none;
-  color:inherit;
-  position:relative;
-  overflow:hidden;
-  transition:border-color 0.12s ease, transform 0.08s ease, box-shadow 0.12s ease;
-}
-.tool-card::before{
-  content:"";
-  position:absolute;
-  top:0; left:0; right:0;
-  height:3px;
-  background:linear-gradient(90deg, var(--terracotta), var(--lapis) 65%, transparent);
-}
-.tool-card:hover{
-  border-color:var(--terracotta);
-  transform:translateY(-2px);
-  box-shadow:0 4px 14px rgba(58,48,34,0.1);
-}
-.tool-glyph{
-  font-family:'Noto Sans Cuneiform', serif;
-  font-size:28px;
-  color:var(--terracotta);
-}
-.tool-name{
-  font-family:'Spectral', serif;
-  font-weight:600;
-  font-size:19px;
-  color:var(--clay-900);
-  margin:0;
-}
-.tool-desc{
-  font-size:13.5px;
-  color:var(--clay-700);
-  line-height:1.55;
-  margin:0;
-  flex-grow:1;
-}
-.tool-cta{
-  font-family:'JetBrains Mono', monospace;
-  font-size:11px;
-  letter-spacing:0.08em;
-  text-transform:uppercase;
-  color:var(--terracotta-dark);
-}
+  function formatoDe(nombre) {
+    var ext = nombre.split(".").pop().toUpperCase();
+    return ext;
+  }
 
-/* Sección "acerca de" */
-.about-block{
-  margin-top:52px;
-  padding-top:32px;
-  border-top:1px solid var(--line);
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:36px;
-}
-.about-block h2{
-  font-family:'Spectral', serif;
-  font-weight:600;
-  font-size:21px;
-  color:var(--clay-900);
-  margin:0 0 12px;
-}
-.about-block p{
-  font-size:14.5px;
-  color:var(--clay-700);
-  line-height:1.65;
-  margin:0 0 10px;
-}
+  function tamanoLegible(bytes) {
+    if (bytes < 1024) return bytes + " B";
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + " KB";
+    return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+  }
 
-@media (max-width:720px){
-  .stats-strip{ grid-template-columns:repeat(2, 1fr); }
-  .stat:nth-child(3){ border-left:none; }
-  .about-block{ grid-template-columns:1fr; gap:20px; }
-}
+  function glifoPorDefecto(ext) {
+    if (ext === "PDF") return "𒀝";
+    if (ext === "XLSX" || ext === "XLS" || ext === "CSV") return "𒑐";
+    if (ext === "DOCX" || ext === "DOC") return "𒁇";
+    return "𒀭";
+  }
+
+  function crearTarjeta(archivo) {
+    var meta = window.DESCARGAS_META[archivo.name] || {};
+    var ext = formatoDe(archivo.name);
+    var glifo = meta.glifo || glifoPorDefecto(ext);
+    var titulo = meta.titulo || archivo.name.replace(/\.[^.]+$/, "");
+    var descripcion = meta.descripcion || "Documento disponible para descargar.";
+    var tamano = tamanoLegible(archivo.size);
+
+    var card = document.createElement("div");
+    card.className = "dl-card";
+    card.innerHTML =
+      '<div class="dl-card-top">' +
+        '<div class="dl-glyph">' + glifo + '</div>' +
+        '<div class="dl-format">' + ext + '</div>' +
+      '</div>' +
+      '<h3 class="dl-title"></h3>' +
+      '<p class="dl-desc"></p>' +
+      '<div class="dl-meta">' +
+        '<span class="dl-size">' + tamano + '</span>' +
+        '<a class="dl-btn" download>Descargar</a>' +
+      '</div>';
+
+    card.querySelector(".dl-title").textContent = titulo;
+    card.querySelector(".dl-desc").textContent = descripcion;
+    var btn = card.querySelector(".dl-btn");
+    btn.href = CARPETA + "/" + encodeURIComponent(archivo.name);
+
+    return card;
+  }
+
+  function render(archivos) {
+    contenedor.innerHTML = "";
+    estado.remove();
+
+    var porSeccion = {};
+    archivos.forEach(function (a) {
+      var meta = window.DESCARGAS_META[a.name] || {};
+      var seccion = meta.seccion || "Otros documentos";
+      (porSeccion[seccion] = porSeccion[seccion] || []).push(a);
+    });
+
+    var orden = window.DESCARGAS_ORDEN_SECCIONES || [];
+    var secciones = Object.keys(porSeccion).sort(function (a, b) {
+      var ia = orden.indexOf(a), ib = orden.indexOf(b);
+      if (ia === -1) ia = 999;
+      if (ib === -1) ib = 999;
+      return ia - ib;
+    });
+
+    secciones.forEach(function (nombreSeccion) {
+      var h2 = document.createElement("h2");
+      h2.className = "section-label";
+      h2.textContent = nombreSeccion;
+      contenedor.appendChild(h2);
+
+      var grid = document.createElement("div");
+      grid.className = "dl-grid";
+      porSeccion[nombreSeccion]
+        .sort(function (a, b) { return a.name.localeCompare(b.name); })
+        .forEach(function (archivo) {
+          grid.appendChild(crearTarjeta(archivo));
+        });
+      contenedor.appendChild(grid);
+    });
+
+    var footer = document.createElement("footer");
+    footer.textContent = archivos.length + " archivos · fuentes: ePSD2 (Pennsylvania Sumerian Dictionary) y OGSL (Oracc Global Sign List, CC0)";
+    contenedor.appendChild(footer);
+  }
+
+  fetch(API_URL)
+    .then(function (res) {
+      if (!res.ok) throw new Error("GitHub respondió " + res.status);
+      return res.json();
+    })
+    .then(function (data) {
+      var archivos = data.filter(function (item) { return item.type === "file"; });
+      render(archivos);
+    })
+    .catch(function (err) {
+      estado.innerHTML =
+        '<p class="dl-note">No se pudo cargar la lista de archivos automáticamente ahorita (' + err.message + ').' +
+        ' Puedes ver los archivos directo en <a href="https://github.com/' + REPO_OWNER + '/' + REPO_NAME + '/tree/main/' + CARPETA + '" target="_blank" rel="noopener">GitHub</a>.</p>';
+    });
+})();
